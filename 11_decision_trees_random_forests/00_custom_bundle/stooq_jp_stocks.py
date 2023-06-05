@@ -33,20 +33,20 @@ def ticker_generator():
     """
     Lazily return (sid, ticker) tuple
     """
-    return (v for v in load_equities().values)
+    return iter(load_equities().values)
 
 
 def data_generator():
+    exchange = 'XTKS'
+
     for sid, symbol, asset_name in ticker_generator():
-        df = pd.read_hdf(custom_data_path / 'stooq.h5', 'jp/{}'.format(sid))
+        df = pd.read_hdf(custom_data_path / 'stooq.h5', f'jp/{sid}')
 
         start_date = df.index[0]
         end_date = df.index[-1]
 
         first_traded = start_date.date()
         auto_close_date = end_date + pd.Timedelta(days=1)
-        exchange = 'XTKS'
-
         yield (sid, df), symbol, asset_name, start_date, end_date, first_traded, auto_close_date, exchange
 
 

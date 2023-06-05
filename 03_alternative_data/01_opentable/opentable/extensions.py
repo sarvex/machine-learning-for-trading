@@ -39,7 +39,7 @@ class MonitorDownloadsExtension(_LoopingExtension):
 
     def monitor(self):
         active_downloads = len(self.crawler.engine.downloader.active)
-        logger.info("Active downloads: {}".format(active_downloads))
+        logger.info(f"Active downloads: {active_downloads}")
 
 
 class DumpStatsExtension(_LoopingExtension):

@@ -54,7 +54,7 @@ if __name__ == '__main__':
 
     for sid, symbol in symbols.set_index('sid').symbol.items():
         p = prices.loc[symbol]
-        p.to_hdf('stooq.h5', 'jp/{}'.format(sid), format='t')
+        p.to_hdf('stooq.h5', f'jp/{sid}', format='t')
 
     with pd.HDFStore('stooq.h5') as store:
         print(store.info())
