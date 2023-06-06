@@ -12,9 +12,9 @@ np.random.seed(42)
 path = Path('transcripts', 'parsed')
 
 files = path.glob(('**/content.csv'))
-words = 0
-for file in files:
-    words += pd.read_csv(file).content.str.split().str.len().sum()
+words = sum(
+    pd.read_csv(file).content.str.split().str.len().sum() for file in files
+)
 print(words)
 
 # print(len(list(files)))

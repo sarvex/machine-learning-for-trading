@@ -45,16 +45,14 @@ def parse_html(html):
         return
     title = title.text
     print(title)
-    match = date_pattern.search(title)
-    if match:
+    if match := date_pattern.search(title):
         m, d, y = match.groups()
         meta['month'] = int(m)
         meta['day'] = int(d)
         meta['year'] = int(y)
 
-    match = quarter_pattern.search(title)
-    if match:
-        meta['quarter'] = match.group(0)
+    if match := quarter_pattern.search(title):
+        meta['quarter'] = match[0]
 
     qa = 0
     speaker_types = ['Executives', 'Analysts']
@@ -65,7 +63,7 @@ def parse_html(html):
         elif text.lower().startswith('question-and'):
             qa = 1
             continue
-        elif any([type in text for type in speaker_types]):
+        elif any(type in text for type in speaker_types):
             for participant in header.find_next_siblings('p'):
                 if participant.find('strong'):
                     break

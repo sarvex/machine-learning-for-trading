@@ -15,11 +15,10 @@ This code is based on Algoseek's NASDAQ100 minute-bar trade data.
 Please refer to the README for a brief summary on how you could adapt this code for your purposes.  
 """
 
-ZIPLINE_ROOT = getenv('ZIPLINE_ROOT')
-if not ZIPLINE_ROOT:
-    custom_data_path = Path('~/.zipline/custom_data').expanduser()
-else:
+if ZIPLINE_ROOT := getenv('ZIPLINE_ROOT'):
     custom_data_path = Path(ZIPLINE_ROOT, 'custom_data')
+else:
+    custom_data_path = Path('~/.zipline/custom_data').expanduser()
 
 
 def load_equities():
@@ -30,10 +29,12 @@ def ticker_generator():
     """
     Lazily return (sid, ticker) tuple
     """
-    return (v for v in load_equities().values)
+    return iter(load_equities().values)
 
 
 def data_generator():
+    exchange = 'AlgoSeek'
+
     for sid, symbol, asset_name in ticker_generator():
         df = (pd.read_hdf(custom_data_path / 'algoseek.h5', str(sid))
               .tz_localize('US/Eastern')
@@ -44,8 +45,6 @@ def data_generator():
 
         first_traded = start_date.date()
         auto_close_date = end_date + pd.Timedelta(days=1)
-        exchange = 'AlgoSeek'
-
         yield (sid, df), symbol, asset_name, start_date, end_date, first_traded, auto_close_date, exchange
 
 

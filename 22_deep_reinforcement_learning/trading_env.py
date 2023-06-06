@@ -69,7 +69,7 @@ class DataSource:
         self.offset = None
 
     def load_data(self):
-        log.info('loading data for {}...'.format(self.ticker))
+        log.info(f'loading data for {self.ticker}...')
         idx = pd.IndexSlice
         with pd.HDFStore('../data/assets.h5') as store:
             df = (store['quandl/wiki/prices']
@@ -78,7 +78,7 @@ class DataSource:
                   .dropna()
                   .sort_index())
         df.columns = ['close', 'volume', 'low', 'high']
-        log.info('got data for {}...'.format(self.ticker))
+        log.info(f'got data for {self.ticker}...')
         return df
 
     def preprocess_data(self):
@@ -249,7 +249,7 @@ class TradingEnvironment(gym.Env):
 
     def step(self, action):
         """Returns state observation, reward, done and info"""
-        assert self.action_space.contains(action), '{} {} invalid'.format(action, type(action))
+        assert self.action_space.contains(action), f'{action} {type(action)} invalid'
         observation, done = self.data_source.take_step()
         reward, info = self.simulator.take_step(action=action,
                                                 market_return=observation[0])

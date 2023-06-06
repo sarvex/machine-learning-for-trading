@@ -22,12 +22,11 @@ Please refer to the README for a brief summary on how you could adapt this code 
 PROJECT_DIR = Path('..', '..')
 data_path = PROJECT_DIR / 'data' / 'nasdaq100'
 
-ZIPLINE_ROOT = getenv('ZIPLINE_ROOT')
-if not ZIPLINE_ROOT:
-    quandl_path = Path('~', '.zipline', 'data', 'quandl').expanduser()
-else:
+if ZIPLINE_ROOT := getenv('ZIPLINE_ROOT'):
     quandl_path = Path(ZIPLINE_ROOT, 'data', 'quandl')
 
+else:
+    quandl_path = Path('~', '.zipline', 'data', 'quandl').expanduser()
 downloads = sorted([f.name for f in quandl_path.iterdir() if f.is_dir()])
 if not downloads:
     print('Need to run "zipline ingest" first')
@@ -103,6 +102,8 @@ def get_ohlcv_by_ticker():
     symbol_dict = equities.set_index('symbol').sid.to_dict()
     for symbol, data in nasdaq100.groupby(level='ticker'):
         print(symbol)
-        data.reset_index('ticker', drop=True).to_hdf('algoseek.h5', '{}'.format(symbol_dict[symbol]))
+        data.reset_index('ticker', drop=True).to_hdf(
+            'algoseek.h5', f'{symbol_dict[symbol]}'
+        )
 
     equities.drop('quandl_sid', axis=1).to_hdf('algoseek.h5', 'equities')
